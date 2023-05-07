@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
+import android.view.KeyEvent;
+
 
 public class MainActivity extends AppCompatActivity {
     private EditText characterNameInput;
@@ -30,6 +32,22 @@ public class MainActivity extends AppCompatActivity {
         characterNameInput = findViewById(R.id.character_name_input);
         searchButton = findViewById(R.id.search_button);
         charactersRecyclerView = findViewById(R.id.characters_recycler_view);
+
+        characterNameInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    String characterName = characterNameInput.getText().toString();
+                    if (!TextUtils.isEmpty(characterName)) {
+                        searchForCharacter(characterName);
+                    } else {
+                        Toast.makeText(MainActivity.this, "Please enter a character name.", Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,21 +91,25 @@ public class MainActivity extends AppCompatActivity {
                 String about = characterData.getString("about");
                 characters.add(new Character(mal_id, url, imageUrl, name, about));
             }
-            CharacterAdapter characterAdapter = new CharacterAdapter(characters, new CharacterAdapter.OnCharacterClickListener() {
-                @Override
-                public void onCharacterClick(Character character) {
-                    onCharacterSelected(character);
-                }
-            });
-            charactersRecyclerView.setAdapter(characterAdapter);
-            charactersRecyclerView.setVisibility(View.VISIBLE); // Make the RecyclerView visible
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(MainActivity.this, "Error parsing character data.", Toast.LENGTH_SHORT).show();
-        }
+            if (characters.isEmpty()) {
+                Toast.makeText(MainActivity.this, "No characters found with that name. Please try again.", Toast.LENGTH_SHORT).show();
+            } else {
+                CharacterAdapter characterAdapter = new CharacterAdapter(characters, new CharacterAdapter.OnCharacterClickListener() {
+                    @Override
+                    public void onCharacterClick(Character character) {
+                        onCharacterSelected(character);
+                    }
+                });
+                charactersRecyclerView.setAdapter(characterAdapter);
+                charactersRecyclerView.setVisibility(View.VISIBLE); // Make the RecyclerView visible
+            }
+            } catch(Exception e){
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Error parsing character data.", Toast.LENGTH_SHORT).show();
+            }
+
     }
-
     private void onCharacterSelected(Character character) {
         Intent chatIntent = new Intent(MainActivity.this, ChatActivity.class);
         chatIntent.putExtra("character", character);

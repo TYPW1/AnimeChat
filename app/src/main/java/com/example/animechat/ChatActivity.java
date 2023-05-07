@@ -16,6 +16,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.view.KeyEvent;
+
 public class ChatActivity extends AppCompatActivity {
     private RecyclerView chatRecyclerView;
     private EditText chatInput;
@@ -31,6 +37,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+
         chatGPTService = new ChatGPTService();
 
         character = (Character) getIntent().getSerializableExtra("character");
@@ -41,10 +48,35 @@ public class ChatActivity extends AppCompatActivity {
         chatInput = findViewById(R.id.chat_input);
         sendButton = findViewById(R.id.send_button);
 
+        chatInput.requestFocus();
+
         chatMessages = new ArrayList<>();
 
         final ChatAdapter chatAdapter = new ChatAdapter(chatMessages);
         chatRecyclerView.setAdapter(chatAdapter);
+
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        chatInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    String messageText = chatInput.getText().toString();
+                    if (!messageText.isEmpty()) {
+                        sendMessage(messageText);
+                        chatInput.setText("");
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +87,15 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        chatInput.requestFocus();
+    }
+
 
     private void sendMessage(final String messageText) {
         chatMessages.add(new Message(messageText, true));
@@ -66,33 +106,30 @@ public class ChatActivity extends AppCompatActivity {
             public void run() {
                 String response = chatGPTService.getChatResponse(messageText);
                 if (response != null) {
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        JSONArray choices = jsonResponse.getJSONArray("choices");
-                        JSONObject choice = choices.getJSONObject(0);
-                        JSONObject messageObj = choice.getJSONObject("message");
-                        String reply = messageObj.getString("content");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                chatMessages.add(new Message(reply, false));
-                                chatRecyclerView.getAdapter().notifyDataSetChanged();
-                            }
-                        });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    final String reply = response;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            chatMessages.add(new Message(reply, false));
+                            chatRecyclerView.getAdapter().notifyDataSetChanged();
+                            scrollToBottom();
+                        }
+                    });
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             chatMessages.add(new Message("Error: Could not get a response from the API.", false));
                             chatRecyclerView.getAdapter().notifyDataSetChanged();
+                            scrollToBottom();
                         }
                     });
                 }
             }
         });
+        scrollToBottom();
     }
-
+    private void scrollToBottom() {
+        chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
+    }
 }
