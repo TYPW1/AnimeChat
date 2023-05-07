@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AnimeChat</string>
+    <string name="type_character_name">Type character name</string>
+    <string name="search">Search</string>
+    <string name="type_your_message">Type your message</string>
+    <string name="send">Send</string>
+</resources>
