@@ -10,6 +10,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 public class ChatGPTService {
     private static final String API_KEY = "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";
@@ -18,6 +21,9 @@ public class ChatGPTService {
 
     private OkHttpClient client;
     private String characterName;
+
+    private List<Message> messageHistory;
+
 
     private String insertMultipleEmojis(String text, String[] selectedEmojis, int numberOfEmojis) {
         Random random = new Random();
@@ -99,9 +105,14 @@ public class ChatGPTService {
         this.characterName = characterName;
     }
 
+    public void addToMessageHistory(Message message) {
+        messageHistory.add(message);
+    }
+
 
     public ChatGPTService() {
         client = new OkHttpClient();
+        messageHistory = new ArrayList<>();
     }
 
     public String getChatResponse(String message) {
@@ -125,6 +136,17 @@ public class ChatGPTService {
             }
         }
 
+        for (Message msg : messageHistory) {
+            JSONObject historyMessage = new JSONObject();
+            try {
+                historyMessage.put("role", msg.isUser() ? "user" : "assistant");
+                historyMessage.put("content", msg.getText());
+                messages.put(historyMessage);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         JSONObject userMessage = new JSONObject();
         try {
             userMessage.put("role", "user");
@@ -133,6 +155,7 @@ public class ChatGPTService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
         JSONObject requestBody = new JSONObject();
         try {

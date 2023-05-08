@@ -99,6 +99,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage(final String messageText) {
         chatMessages.add(new Message(messageText, true));
+
+        chatGPTService.addToMessageHistory(new Message(messageText, true));
+
         chatInput.setText("");
 
         AsyncTask.execute(new Runnable() {
@@ -111,6 +114,9 @@ public class ChatActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             chatMessages.add(new Message(reply, false));
+
+                            chatGPTService.addToMessageHistory(new Message(reply, false));
+
                             chatRecyclerView.getAdapter().notifyDataSetChanged();
                             scrollToBottom();
                         }
