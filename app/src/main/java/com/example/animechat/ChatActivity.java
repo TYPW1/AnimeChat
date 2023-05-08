@@ -9,18 +9,17 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.view.KeyEvent;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
+
 
 public class ChatActivity extends AppCompatActivity {
     private RecyclerView chatRecyclerView;
@@ -42,6 +41,7 @@ public class ChatActivity extends AppCompatActivity {
 
         character = (Character) getIntent().getSerializableExtra("character");
         chatGPTService.setCharacter(character.getName());
+        setBackgroundImage(character.getImageUrl());
 
 
         chatRecyclerView = findViewById(R.id.chat_recycler_view);
@@ -89,6 +89,29 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
+
+    private void setBackgroundImage(String imageUrl) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    InputStream in = new java.net.URL(imageUrl).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(in);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ImageView chatBackground = findViewById(R.id.chat_background);
+                            chatBackground.setImageBitmap(bitmap);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
 
     @Override
     protected void onResume() {

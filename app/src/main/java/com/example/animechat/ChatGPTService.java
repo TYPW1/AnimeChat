@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 public class ChatGPTService {
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "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";
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -161,7 +161,7 @@ public class ChatGPTService {
         try {
             requestBody.put("model", "gpt-3.5-turbo");
             requestBody.put("messages", messages);
-            requestBody.put("max_tokens", 50); // Limit the response length
+            requestBody.put("max_tokens", 1000); // Limit the response length
             requestBody.put("temperature", 0.7); // Control the randomness of the output
         } catch (JSONException e) {
             e.printStackTrace();
