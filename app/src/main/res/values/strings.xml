@@ -4,4 +4,6 @@
     <string name="search">Search</string>
     <string name="type_your_message">Type your message</string>
     <string name="send">Send</string>
+    <string name="backbutton">backbutton</string>
+    <string name="background_chat">background chat</string>
 </resources>

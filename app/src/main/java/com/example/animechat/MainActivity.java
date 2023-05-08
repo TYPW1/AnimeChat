@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 if (result != null) {
                     parseAndDisplayCharacters(result);
                 } else {
-                    Toast.makeText(MainActivity.this, "Error fetching character data.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Error fetching character data. Please verify your internet connection", Toast.LENGTH_SHORT).show();
                 }
             }
         });

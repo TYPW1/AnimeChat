@@ -3,10 +3,14 @@ package com.example.animechat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
+import android.view.Gravity;
+
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHolder> {
     private List<Message> messages;
@@ -26,7 +30,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
         holder.messageText.setText(message.getText());
+
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) holder.messageText.getLayoutParams();
+
+        if (message.isUser()) {
+            holder.messageText.setBackgroundResource(R.drawable.user_message_background);
+            layoutParams.gravity = Gravity.END;
+        } else {
+            holder.messageText.setBackgroundResource(R.drawable.character_message_background);
+            layoutParams.gravity = Gravity.START;
+        }
+
+        holder.messageText.setLayoutParams(layoutParams);
     }
+
+
 
     @Override
     public int getItemCount() {
