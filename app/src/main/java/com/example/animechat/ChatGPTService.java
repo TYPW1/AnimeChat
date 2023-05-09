@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 public class ChatGPTService {
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "";
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
