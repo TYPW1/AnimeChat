@@ -4,6 +4,7 @@ package com.example.animechat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,12 +13,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import android.view.KeyEvent;
-
+import com.google.android.material.navigation.NavigationView;
+import androidx.annotation.NonNull;
 
 public class MainActivity extends AppCompatActivity {
     private EditText characterNameInput;
@@ -29,9 +31,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialize DrawerLayout
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        // Initialize NavigationView
+        NavigationView navigationView = findViewById(R.id.nav_view);
         characterNameInput = findViewById(R.id.character_name_input);
         searchButton = findViewById(R.id.search_button);
         charactersRecyclerView = findViewById(R.id.characters_recycler_view);
+
+        // Set item click listener for NavigationView
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                // Handle navigation view item clicks here.
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_recent_conversation_1:
+                        // Handle the click
+                        // For example:
+                        // Load the chat history of the first recent conversation
+                        break;
+                    // Add more cases if you have more items
+                }
+
+                // Close the navigation drawer
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
 
         characterNameInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
