@@ -4,6 +4,7 @@ package com.example.animechat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private Button searchButton;
     private RecyclerView charactersRecyclerView;
 
+    private NavigationView navigationView;
+
+    private RecentConversationsHelper recentConversationsHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,29 +39,34 @@ public class MainActivity extends AppCompatActivity {
         // Initialize DrawerLayout
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         // Initialize NavigationView
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
+        recentConversationsHelper = new RecentConversationsHelper(this);
         characterNameInput = findViewById(R.id.character_name_input);
         searchButton = findViewById(R.id.search_button);
         charactersRecyclerView = findViewById(R.id.characters_recycler_view);
+
+
 
         // Set item click listener for NavigationView
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                // Handle navigation view item clicks here.
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_recent_conversation_1:
-                        // Handle the click
-                        // For example:
-                        // Load the chat history of the first recent conversation
+                // Get the list of recent conversations
+                List<Character> characters = recentConversationsHelper.getRecentConversations();
+                for (Character character : characters) {
+                    // If the clicked item's ID matches a character's mal_id, navigate to the chat activity
+                    if (menuItem.getItemId() == character.getMal_id()) {
+                        onCharacterSelected(character);
                         break;
-                    // Add more cases if you have more items
+                    }
                 }
 
                 // Close the navigation drawer
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
+
+
         });
 
         characterNameInput.setOnKeyListener(new View.OnKeyListener() {
@@ -86,6 +96,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateNavigationDrawer();
+    }
+
+    // This method updates the NavigationView's menu items based on the recent conversations
+    private void updateNavigationDrawer() {
+        List<Character> characters = recentConversationsHelper.getRecentConversations();
+        Menu menu = navigationView.getMenu();
+        menu.clear(); // Remove the old items
+        for (int i = 0; i < characters.size(); i++) {
+            Character character = characters.get(i);
+            // Use the character's mal_id as the item ID, and the character's name as the item title
+            menu.add(Menu.NONE, character.getMal_id(), Menu.NONE, character.getName()).setIcon(R.drawable.baseline_recent_actors_24); // Replace ic_recent_conversation with your drawable resource
+        }
     }
 
     private void searchForCharacter(String characterName) {
@@ -137,8 +165,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void onCharacterSelected(Character character) {
+        recentConversationsHelper.saveRecentConversation(character);
         Intent chatIntent = new Intent(MainActivity.this, ChatActivity.class);
         chatIntent.putExtra("character", character);
         startActivity(chatIntent);
     }
+
+
 }

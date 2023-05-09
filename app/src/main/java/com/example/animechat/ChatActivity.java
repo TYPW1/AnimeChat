@@ -1,5 +1,6 @@
 package com.example.animechat;
 
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -128,6 +129,8 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage(final String messageText) {
         chatMessages.add(new Message(messageText, true));
 
+        playSound(R.raw.send);
+
         chatGPTService.addToMessageHistory(new Message(messageText, true));
 
         chatInput.setText("");
@@ -142,6 +145,8 @@ public class ChatActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             chatMessages.add(new Message(reply, false));
+
+                            playSound(R.raw.received);
 
                             chatGPTService.addToMessageHistory(new Message(reply, false));
 
@@ -163,6 +168,18 @@ public class ChatActivity extends AppCompatActivity {
         });
         scrollToBottom();
     }
+    private void playSound(int resourceId) {
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, resourceId);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
+        mediaPlayer.start();
+    }
+
+
     private void scrollToBottom() {
         chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
     }
