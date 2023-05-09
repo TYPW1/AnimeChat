@@ -135,6 +135,11 @@ public class ChatActivity extends AppCompatActivity {
 
         chatInput.setText("");
 
+        // Add a null message for the character to show the loading spinner
+        chatMessages.add(new Message(null, false));
+        chatRecyclerView.getAdapter().notifyDataSetChanged();
+        scrollToBottom();
+
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -144,6 +149,8 @@ public class ChatActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            // Replace the null message with the actual response
+                            chatMessages.remove(chatMessages.size() - 1);
                             chatMessages.add(new Message(reply, false));
 
                             playSound(R.raw.received);
@@ -158,7 +165,9 @@ public class ChatActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            chatMessages.add(new Message("Error: Could not get a response from the API.", false));
+                            // Replace the null message with an error message
+                            chatMessages.remove(chatMessages.size() - 1);
+                            chatMessages.add(new Message("Verify your internet connection UwU", false));
                             chatRecyclerView.getAdapter().notifyDataSetChanged();
                             scrollToBottom();
                         }
