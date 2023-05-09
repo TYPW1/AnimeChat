@@ -15,30 +15,36 @@
             android:id="@+id/characterImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/character_s_image" />
 
         <TextView
             android:id="@+id/characterName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/characterImage"
-            android:layout_toRightOf="@id/characterImage"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <TextView
+        <com.webtoonscorp.android.readmore.ReadMoreTextView
             android:id="@+id/characterAbout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="17dp"
-            android:layout_marginLeft="17dp"
             android:layout_marginTop="34dp"
             android:layout_toEndOf="@id/characterImage"
-            android:layout_toRightOf="@id/characterImage"
             android:textSize="16sp"
             android:textStyle="italic"
+
+            app:readMoreMaxLines="3"
+            app:readMoreText="read_more"
+            app:readMoreTextColor="?colorPrimary"
+            app:readMoreTextUnderline="true"
+
+            app:readLessText="read_less"
+            app:readLessTextColor="?colorPrimary"
+            app:readLessTextUnderline="true"
             />
 
     </RelativeLayout>
