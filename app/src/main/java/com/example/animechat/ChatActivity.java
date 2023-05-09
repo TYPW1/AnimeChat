@@ -40,6 +40,11 @@ public class ChatActivity extends AppCompatActivity {
         chatGPTService = new ChatGPTService();
 
         character = (Character) getIntent().getSerializableExtra("character");
+
+        // Set the ActionBar title to the character's name
+        getSupportActionBar().setTitle(character.getName());
+
+
         chatGPTService.setCharacter(character.getName());
         setBackgroundImage(character.getImageUrl());
 
