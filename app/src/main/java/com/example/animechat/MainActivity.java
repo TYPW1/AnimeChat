@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,10 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private EditText characterNameInput;
     private Button searchButton;
     private RecyclerView charactersRecyclerView;
-
     private NavigationView navigationView;
-
     private RecentConversationsHelper recentConversationsHelper;
+    private ImageView noResultImage;
+    private TextView noResultText;
+    private CharacterAdapter characterAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         characterNameInput = findViewById(R.id.character_name_input);
         searchButton = findViewById(R.id.search_button);
         charactersRecyclerView = findViewById(R.id.characters_recycler_view);
+        noResultImage = findViewById(R.id.no_result_image);
+        noResultText = findViewById(R.id.no_result_text);
+
 
 
 
@@ -86,10 +92,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 String characterName = characterNameInput.getText().toString();
                 if (!TextUtils.isEmpty(characterName)) {
+                    noResultImage.setVisibility(View.GONE);
+                    noResultText.setVisibility(View.GONE);
                     searchForCharacter(characterName);
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a character name.", Toast.LENGTH_SHORT).show();
@@ -147,15 +156,18 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (characters.isEmpty()) {
-                Toast.makeText(MainActivity.this, "No characters found with that name. Please try again.", Toast.LENGTH_SHORT).show();
+                noResultImage.setVisibility(View.VISIBLE);
+                noResultText.setVisibility(View.VISIBLE);
+                charactersRecyclerView.setVisibility(View.GONE);
             } else {
-                CharacterAdapter characterAdapter = new CharacterAdapter(characters, new CharacterAdapter.OnCharacterClickListener() {
+                noResultImage.setVisibility(View.GONE);
+                noResultText.setVisibility(View.GONE);
+                charactersRecyclerView.setAdapter(new CharacterAdapter(characters, new CharacterAdapter.OnCharacterClickListener() {
                     @Override
                     public void onCharacterClick(Character character) {
                         onCharacterSelected(character);
                     }
-                });
-                charactersRecyclerView.setAdapter(characterAdapter);
+                }));
                 charactersRecyclerView.setVisibility(View.VISIBLE); // Make the RecyclerView visible
             }
             } catch(Exception e){
