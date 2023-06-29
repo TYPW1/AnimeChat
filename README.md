@@ -46,7 +46,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact 📧
 
-TITCHEU YAMDJEU Pierre Wilfried - [@typw01](https://twitter.com/typw01) - pierretypw@gmail.com
+TITCHEU YAMDJEU Pierre Wilfried - [@typw01](https://twitter.com/PierreTypw) - pierretypw@gmail.com
 
 Project Link: [https://github.com/TYPW1/AnimeChat](https://github.com/TYPW1/AnimeChat)
 
